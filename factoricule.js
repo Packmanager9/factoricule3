@@ -702,6 +702,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
             if(this.type == 1005){
                 this.color = "#FFAAAA"
             }
+            if(this.type == 1006){
+                this.color = "#AAAA00"
+            }
             if(this.type == 5){
                 this.color = "#FF00FF"
             }
@@ -1623,6 +1626,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
                              candyman.structures.push(phosphatebase)
                              candyman.selectedindex++
                           }
+                          if(menu.selector == 18){
+                              let h2sbase = new Assembler(grid.blocks[t])
+                              h2sbase.body.type = 1006
+                              candyman.structures.push(h2sbase)
+                              candyman.selectedindex++
+                           }
                     }
                 }
 
@@ -1878,6 +1887,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         }
                         if(t==17){
                             tooltiptext = "Phosphate Assembler"
+                        }
+                        if(t==18){
+                            tooltiptext = "Hydrogen Sulfide Assembler"
                         }
 
                         
@@ -2251,6 +2263,16 @@ window.addEventListener('DOMContentLoaded', (event) => {
                     oxy.type = 3
                     block.detail.push(oxy)
                     block.detail.push(phosphorous)
+                }else if(t == 18){
+                    let detail = new Circles(block.x+5, block.y+5,4)
+                    detail.type = 1006
+                    block.detail.push(detail)
+                    let sulfur = new Particle(block.x+7, block.y+5,.8, "#FFBB44", Math.random()-.5,Math.random()-.5)
+                    sulfur.type = 1002
+                    let hydro = new Particle(block.x+3, block.y+5, .7, "#00FF00", Math.random()-.5,Math.random()-.5)
+                    hydro.type = 1
+                    block.detail.push(hydro)
+                    block.detail.push(sulfur)
                 }else{
                     let detail = new Circles(block.x+5, block.y+5, 5)
                     detail.type = 0
@@ -2687,6 +2709,18 @@ window.addEventListener('DOMContentLoaded', (event) => {
                     }
                     // console.log(this.tile)
                 }
+                if(this.body.type == 1006){
+                    if(this.tile.sulfur >= 50){
+                        if(this.tile.hydrogen >= 100){
+                            this.tile.sulfur-=50
+                            this.tile.hydrogen-=100
+                            let sulfurhydro = new Particle(this.tile.glob.x,this.tile.glob.y, 1.8, "#AAAA00", Math.random()-.5,Math.random()-.5)
+                            sulfurhydro.type = 1006
+                            this.tile.mols.push(sulfurhydro)
+                        }
+                    }
+                    // console.log(this.tile)
+                }
             // }
         }
     }
@@ -2904,6 +2938,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         grid.blocks[t].mols.unshift(this.particle.copy())
                     }
                     if(this.particle.type == 1005){
+                        grid.blocks[t].mols.unshift(this.particle.copy())
+                    }
+                    if(this.particle.type == 1006){
                         grid.blocks[t].mols.unshift(this.particle.copy())
                     }
                     if(this.particle.type == 10){
@@ -3464,6 +3501,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                 }
                            
                                 if(this.mols[t].marked != 1 && this.mols[t].type ==1005){
+                                    grid.blocks[this.neighbors[k]].mols.unshift(this.mols[t].copy())
+                                    this.mols[t].marked = 1
+                                }
+                           
+                                if(this.mols[t].marked != 1 && this.mols[t].type ==1006){
                                     grid.blocks[this.neighbors[k]].mols.unshift(this.mols[t].copy())
                                     this.mols[t].marked = 1
                                 }
