@@ -705,6 +705,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
             if(this.type == 1006){
                 this.color = "#AAAA00"
             }
+            if(this.type == 1007){
+                this.color = "#00AAAA"
+            }
             if(this.type == 5){
                 this.color = "#FF00FF"
             }
@@ -1632,6 +1635,13 @@ window.addEventListener('DOMContentLoaded', (event) => {
                               candyman.structures.push(h2sbase)
                               candyman.selectedindex++
                            }
+
+                        if(menu.selector == 19){
+                            let aminobase = new Compssembler(grid.blocks[t])
+                            aminobase.body.type = 1007
+                            candyman.structures.push(aminobase)
+                            candyman.selectedindex++
+                         }
                     }
                 }
 
@@ -1890,6 +1900,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         }
                         if(t==18){
                             tooltiptext = "Hydrogen Sulfide Assembler"
+                        }
+                        if(t==19){
+                            tooltiptext = "Amino Acid Assembler"
                         }
 
                         
@@ -2273,11 +2286,23 @@ window.addEventListener('DOMContentLoaded', (event) => {
                     hydro.type = 1
                     block.detail.push(hydro)
                     block.detail.push(sulfur)
+                }else if(t == 19){
+                    let detail = new Circles(block.x+5, block.y+5,4)
+                    detail.type = 1007
+                    block.detail.push(detail)
+                    
+                    let cyanide = new Particle(block.x+7, block.y+5, 1.4, "#FFAAFF", Math.random()-.5,Math.random()-.5)
+                    cyanide.type = 18
+                    let water = new Particle(block.x+3, block.y+5, 1.4, "#00FFFF", Math.random()-.5,Math.random()-.5)
+                    water.type = 6
+                    block.detail.push(cyanide)
+                    block.detail.push(water)
                 }else{
                     let detail = new Circles(block.x+5, block.y+5, 5)
                     detail.type = 0
                     detail.color = "transparent"
                     block.detail.push(detail)
+
                     
                 }
                 this.blocks.push(block)
@@ -2825,6 +2850,35 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         }
                     }
                 }
+                if(this.body.type == 1007){
+                    let cyanidesum = 0
+                    let watersum = 0
+                    let cyanideind = []
+                    let waterind = []
+                    for(let t = 0;t<this.tile.mols.length;t++){
+                        if(this.tile.mols[t].type == 6 && watersum<2){
+                            watersum++
+                            waterind.push(t)
+                        }
+                        if(this.tile.mols[t].type == 18 && cyanidesum<2){
+                            cyanidesum++
+                            cyanideind.push(t)
+                        }
+                    }
+                    if(watersum >= 2){
+                        if(cyanidesum >= 2){
+
+                    for(let t = 0;t<this.tile.mols.length;t++){
+                        if(cyanideind.includes(t)||waterind.includes(t)){
+                            this.tile.mols[t].marked=1
+                        }
+                    }
+                            let aminoacid = new Particle(this.tile.glob.x,this.tile.glob.y, 1.7, "#00AAAA", Math.random()-.5,Math.random()-.5)
+                            aminoacid.type = 1007
+                            this.tile.compmols.push(aminoacid)
+                        }
+                    }
+                }
         }
     }
     class Cup {
@@ -2941,6 +2995,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         grid.blocks[t].mols.unshift(this.particle.copy())
                     }
                     if(this.particle.type == 1006){
+                        grid.blocks[t].mols.unshift(this.particle.copy())
+                    }
+                    if(this.particle.type == 1007){
                         grid.blocks[t].mols.unshift(this.particle.copy())
                     }
                     if(this.particle.type == 10){
@@ -3506,6 +3563,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                 }
                            
                                 if(this.mols[t].marked != 1 && this.mols[t].type ==1006){
+                                    grid.blocks[this.neighbors[k]].mols.unshift(this.mols[t].copy())
+                                    this.mols[t].marked = 1
+                                }
+                           
+                                if(this.mols[t].marked != 1 && this.mols[t].type ==1007){
                                     grid.blocks[this.neighbors[k]].mols.unshift(this.mols[t].copy())
                                     this.mols[t].marked = 1
                                 }
